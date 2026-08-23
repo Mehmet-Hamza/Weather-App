@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherFindProject</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 50px;
+    }
+
+
+    .app-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      
+    }
+
+    /* Search CARD*/
+    .inputCard {
+      background-color: #1e293b;
+      padding: 32px 24px;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .inputCard h2 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #f1f5f9;
+      
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 420px;
+      
+    }
+
+    #input {
+      flex: 1;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background-color: #0f172a;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    #input:focus {
+      border-color: #38bdf8;
+    }
+
+    .input-btn {
+      height: 44px;
+      padding: 0 20px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .input-btn:hover {
+      background-color: #1d4ed8;
+    }
+
+   
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 24px;
+      
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    
+    .result-card {
+      background-color: #1e293b; 
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 220px;
+    }
+
+    .location-info {
+      margin-bottom: 16px;
+      
+    }
+
+    .city {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #38bdf8;
+    
+    }
+
+    .country {
+      font-size: 1rem;
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    .weather-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+      border-top: 1px solid #334155;
+      padding-top: 16px;
+      
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    
+    }
+
+    .detail-item span {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .detail-item strong {
+      font-size: 1.1rem;
+      color: #f8fafc;
+    }
+
+    
+    .lastFiveCity {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .lastFiveCity h3 {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ul li {
+      background-color: #0f172a;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      border: 1px solid #1e293b;
+    }
+
+    
+    .loadingDiv {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 999;
+    }
+
+    .errorCard {
+      background-color: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #991b1b;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      display: none;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+ <div class="app-container">
+    
+    <!-- Search Card -->
+    <div class="inputCard">
+      <h2>Şehir Hava Durumu Sorgula</h2>
+      <div class="search-box">
+        <input id="input" type="text" placeholder="Örn: İstanbul, London..." />
+        <button class="input-btn">Ara</button>
+      </div>
+      <div class="errorCard">
+        <h3>Aranan şehir bulunamadı ❌</h3>
+      </div>
+    </div>
+
+    <!-- conclusion card -->
+    <div class="main-content">
+      
+      <!-- Weather Conclusion Card -->
+      <div class="result-card">
+        <div class="location-info">
+          <h2 class="city">Şehir Seçin</h2>
+          <h3 class="country">Ülke Bilgisi</h3>
+        </div>
+
+        <div class="weather-details">
+          <div class="detail-item">
+            <span>Sıcaklık</span>
+            <strong class="sicaklik">-</strong>
+          </div>
+          <div class="detail-item">
+            <span>Rüzgar Hızı</span>
+            <strong class="rüzgar">-</strong>
+          </div>
+          <div class="detail-item">
+            <span>Nem Oranı</span>
+            <strong class="nem">-</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Last Calls -->
+      <div class="lastFiveCity">
+        <h3>Son Arananlar</h3>
+        <ul class="ul">
+          <li style="color: #64748b; font-style: italic;">Henüz arama yapılmadı</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Loading Screen -->
+  <div class="loadingDiv">
+    <h2 class="loadingText" style="color: white;">Veriler Alınıyor...</h2>
+  </div>
+
+  <script>
+   
+    const citys = [];
+
+    const weather = () => {
+      const SearchButon = document.querySelector('.input-btn');
+      const input = document.querySelector('#input');
+      const cityies = document.querySelector('.city');
+      const country = document.querySelector('.country');
+      const h4 = document.querySelector('.sicaklik');
+      const h4v2 = document.querySelector('.nem');
+      const h4v3 = document.querySelector('.rüzgar');
+      const loadingDiv = document.querySelector('.loadingDiv');
+      const errorCard = document.querySelector('.errorCard');
+      const ul = document.querySelector('.ul');
+
+      SearchButon.onclick = async () => {
+        const query = input.value.trim();
+        if (!query) return;
+
+        errorCard.style.display = 'none';
+        loadingDiv.style.display = 'flex';
+
+        try {
+          const res = await fetch(`https://wttr.in/${encodeURIComponent(query)}?format=j1`);
+          
+          if (!res.ok) {
+            throw new Error("Şehir bulunamadı");
+          }
+
+          const weatherData = await res.json();
+          loadingDiv.style.display = 'none';
+
+          // Destructring
+          const current = weatherData.current_condition[0];
+          const area = weatherData.nearest_area[0];
+
+          const sicaklik = current.temp_C;
+          const rüzgar = current.windspeedKmph;
+          const nem = current.humidity;
+
+          const cityName = area.areaName[0].value;
+          const countryName = area.country[0].value;
+
+          // print
+          cityies.textContent = cityName;
+          country.textContent = `${countryName} (${query.toUpperCase()})`;
+          h4.textContent = `${sicaklik} °C`;
+          h4v3.textContent = `${rüzgar} km/h`;
+          h4v2.textContent = `%${nem}`;
+
+          // Last Call 
+          if (!citys.includes(query)) {
+            citys.unshift(query); 
+            if (citys.length > 5) citys.pop(); 
+          }
+
+          ul.innerHTML = "";
+          citys.forEach((element, i) => {
+            const li = document.createElement('li');
+            li.textContent = `${i + 1}. ${element}`;
+            ul.append(li);
+          });
+
+          input.value = "";
+
+        } catch (error) {
+          loadingDiv.style.display = 'none';
+          errorCard.style.display = 'block';
+
+          setTimeout(() =>{
+            errorCard.style.display = 'none';
+          },2000)
+        }
+      };
+
+      // Enter Key
+      input.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') SearchButon.click();
+      });
+    };
+
+    weather();
+  </script>
+</body>
+</html>
