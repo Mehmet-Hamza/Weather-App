@@ -22,4 +22,4 @@ Weather App, **wttr.in API** entegrasyonu ile anlık hava durumu verilerini suna
 
 1. Repoyu klonlayın:
    ```bash
-   git clone [https://github.com/kullanici-adi/x-teknoloji-landing.git](https://github.com/kullanici-adi/x-teknoloji-landing.git)
+   git clone https://github.com/Mehmet-Hamza/Weather-App.git
