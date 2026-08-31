@@ -1,81 +1,115 @@
- const citys = [];
+const citys = [];
 
-    const weather = () => {
-      const SearchButon = document.querySelector('.input-btn');
-      const input = document.querySelector('#input');
-      const cityies = document.querySelector('.city');
-      const country = document.querySelector('.country');
-      const h4 = document.querySelector('.sicaklik');
-      const h4v2 = document.querySelector('.nem');
-      const h4v3 = document.querySelector('.rüzgar');
-      const loadingDiv = document.querySelector('.loadingDiv');
-      const errorCard = document.querySelector('.errorCard');
-      const ul = document.querySelector('.ul');
+const capitalizeCity = (str) => {
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toLocaleUpperCase('tr-TR') + word.slice(1).toLocaleLowerCase('tr-TR'))
+    .join(' ');
+};
 
-      SearchButon.onclick = async () => {
-        const query = input.value.trim();
-        if (!query) return;
+const showAlert = (message) => {
+  const alertBox = document.querySelector('#custom-alert');
+  const alertText = alertBox.querySelector('.alert-message');
+  
+  alertText.textContent = message;
+  alertBox.classList.add('show');
 
-        errorCard.style.display = 'none';
-        loadingDiv.style.display = 'flex';
+  setTimeout(() => {
+    alertBox.classList.remove('show');
+  }, 3000);
+};
 
-        try {
-          const res = await fetch(`https://wttr.in/${encodeURIComponent(query)}?format=j1`);
-          
-          if (!res.ok) {
-            throw new Error("Şehir bulunamadı");
-          }
+const weather = () => {
+  const form = document.querySelector('#search-form');
+  const input = document.querySelector('#input');
+  const cityies = document.querySelector('.city');
+  const country = document.querySelector('.country');
+  const h4 = document.querySelector('.sicaklik');
+  const h4v2 = document.querySelector('.nem');
+  const h4v3 = document.querySelector('.rüzgar');
+  const loadingDiv = document.querySelector('.loadingDiv');
+  const errorCard = document.querySelector('.errorCard');
+  const ul = document.querySelector('.ul');
 
-          const weatherData = await res.json();
-          loadingDiv.style.display = 'none';
+  // Clear invalid styling on input
+  input.addEventListener('input', () => {
+    input.classList.remove('invalid');
+  });
 
-          // Destructring
-          const current = weatherData.current_condition[0];
-          const area = weatherData.nearest_area[0];
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const query = input.value.trim();
 
-          const sicaklik = current.temp_C;
-          const rüzgar = current.windspeedKmph;
-          const nem = current.humidity;
+    // Validation Check
+    if (!query) {
+      input.classList.add('invalid');
+      showAlert("Lütfen bir şehir adı giriniz!");
+      return;
+    }
 
-          const cityName = area.areaName[0].value;
-          const countryName = area.country[0].value;
+    if (query.length < 2) {
+      input.classList.add('invalid');
+      showAlert("Şehir adı en az 2 karakter olmalıdır!");
+      return;
+    }
 
-          // print
-          cityies.textContent = cityName;
-          country.textContent = `${countryName} (${query.toUpperCase()})`;
-          h4.textContent = `${sicaklik} °C`;
-          h4v3.textContent = `${rüzgar} km/h`;
-          h4v2.textContent = `%${nem}`;
+    input.classList.remove('invalid');
+    errorCard.style.display = 'none';
+    loadingDiv.style.display = 'flex';
 
-          // Last Call 
-          if (!citys.includes(query)) {
-            citys.unshift(query); 
-            if (citys.length > 5) citys.pop(); 
-          }
+    try {
+      const res = await fetch(`https://wttr.in/${encodeURIComponent(query)}?format=j1`);
+      
+      if (!res.ok) {
+        throw new Error("Şehir bulunamadı");
+      }
 
-          ul.innerHTML = "";
-          citys.forEach((element, i) => {
-            const li = document.createElement('li');
-            li.textContent = `${i + 1}. ${element}`;
-            ul.append(li);
-          });
+      const weatherData = await res.json();
+      loadingDiv.style.display = 'none';
 
-          input.value = "";
+      // Destructuring
+      const current = weatherData.current_condition[0];
+      const area = weatherData.nearest_area[0];
 
-        } catch (error) {
-          loadingDiv.style.display = 'none';
-          errorCard.style.display = 'block';
+      const sicaklik = current.temp_C;
+      const rüzgar = current.windspeedKmph;
+      const nem = current.humidity;
 
-          setTimeout(() =>{
-            errorCard.style.display = 'none';
-          },2000)
-        }
-      };
+      const formattedCityName = capitalizeCity(query);
+      const countryName = area.country[0].value;
 
-      // Enter Key
-      input.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') SearchButon.click();
+      // Print
+      cityies.textContent = formattedCityName;
+      country.textContent = countryName;
+      h4.textContent = `${sicaklik} °C`;
+      h4v3.textContent = `${rüzgar} km/h`;
+      h4v2.textContent = `%${nem}`;
+
+      // Last Call
+      if (!citys.includes(formattedCityName)) {
+        citys.unshift(formattedCityName); 
+        if (citys.length > 5) citys.pop(); 
+      }
+
+      ul.innerHTML = "";
+      citys.forEach((element, i) => {
+        const li = document.createElement('li');
+        li.textContent = `${i + 1}. ${element}`;
+        ul.append(li);
       });
-    };
 
-    weather();
+      input.value = "";
+
+    } catch (error) {
+      loadingDiv.style.display = 'none';
+      errorCard.style.display = 'block';
+      showAlert("Aranan şehir verisi alınamadı!");
+
+      setTimeout(() => {
+        errorCard.style.display = 'none';
+      }, 2500);
+    }
+  };
+};
+
+weather();

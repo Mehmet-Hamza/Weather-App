@@ -8,21 +8,43 @@
 </head>
 <body>
 
- <div class="app-container">
+  <!-- Custom Alert Notification Box -->
+  <div id="custom-alert" class="alert-box">
+    <span class="alert-icon">⚠️</span>
+    <span class="alert-message">Lütfen geçerli bir şehir adı giriniz!</span>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <img style="width: 100px;" src="lion-head-png-logo-4.png" alt="">
+      <h1 class="logo-title">Lion Weather App</h1>
+      <div class="header-icon-container">
+      </div>
+    </div>
+  </header>
+
+  <div class="app-container">
     
     <!-- Search Card -->
     <div class="inputCard">
       <h2>Şehir Hava Durumu Sorgula</h2>
-      <div class="search-box">
-        <input id="input" type="text" placeholder="Örn: İstanbul, London..." />
-        <button class="input-btn">Ara</button>
-      </div>
+      <form id="search-form" class="search-box" novalidate>
+        <input 
+          id="input" 
+          type="text" 
+          placeholder="Örn: İstanbul, London..." 
+          required 
+          autocomplete="off"
+        />
+        <button type="submit" class="input-btn">Ara</button>
+      </form>
       <div class="errorCard">
         <h3>Aranan şehir bulunamadı ❌</h3>
       </div>
     </div>
 
-    <!-- conclusion card -->
+    <!-- Conclusion Card -->
     <div class="main-content">
       
       <!-- Weather Conclusion Card -->
@@ -65,12 +87,7 @@
     <h2 class="loadingText" style="color: white;">Veriler Alınıyor...</h2>
   </div>
 
-
-
-
-
-
   <script src="WeatherFindProject.js"></script>
-   
+    
 </body>
 </html>
