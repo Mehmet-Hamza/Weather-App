@@ -1,25 +1,22 @@
-# 🌤️ Weather App
+# 🦁 Lion Weather App
 
-Weather App, **wttr.in API** entegrasyonu ile anlık hava durumu verilerini sunan, modern arayüze ve responsive tasarıma sahip web uygulamasıdır.
+Lion Weather App, kullanıcıların dünya genelindeki şehirlerin anlık hava durumu verilerini hızlı ve kolay bir şekilde öğrenmelerini sağlayan sade ve modern bir web uygulamasıdır.
 
+🔗 **Canlı Demo:** [Lion Weather App'i İncele](https://weather-app-five-chi-90.vercel.app/)
+
+---
 
 ## 🚀 Özellikler
 
-- **Anlık Hava Durumu:** Şehir bazlı arama ile sıcaklık, nem ve rüzgar hızı verileri.
-- **Akıllı Son Aramalar:** Son aranan 5 şehri hafızada tutma ve mükerrer kayıtları engelleme.
-- **Gelişmiş Hata Yönetimi:** Geçersiz aramalarda kullanıcıyı bilgilendiren dinamik hata kartı ve otomatik kapanan bildirimler.
-- **Güvenli Arama:** Girdi temizleme ve URI dönüştürme ile sorunsuz sorgular.
-- **Kullanıcı Dostu UX:** Enter tuşu ile arama desteği ve otomatik input temizleme.
-- **Responsive Tasarım:** Mobil ve masaüstü cihazlarla tam uyumlu CSS Grid/Flexbox mimarisi.
+* 🔍 **Şehir Arama:** Aratılan şehrin anlık hava durumu bilgilerini getirir.
+* 🌡️ **Detaylı Veriler:** Sıcaklık, nem oranı ve rüzgar hızı gibi temel verileri gösterir.
+* 📱 **Duyarlı (Responsive) Tasarım:** Mobil, tablet ve masaüstü cihazlarla tam uyumludur.
 
-## 🛠️ Teknolojiler
+---
 
-- **Frontend:** HTML5, CSS3 ( Karanlık Tema, Flexbox/Grid)
-- **Scripting:** JavaScript (ES6+, Async/Await, Fetch API, DOM Manipulation)
-- **API:** [wttr.in](https://wttr.in/)
+## 🛠️ Kullanılan Teknolojiler
 
-## 🔧 Kurulum ve Çalıştırma
-
-1. Repoyu klonlayın:
-   ```bash
-   git clone https://github.com/Mehmet-Hamza/Weather-App.git
+* **HTML5:** Sayfa yapısı ve anlamsal düzen
+* **CSS3:** Özelleştirilmiş arayüz tasarımı ve responsive düzen
+* **Vanilla JavaScript (ES6+):** Dinamik DOM yönetimi ve API entegrasyonu
+* **OpenWeatherMap API / Weather API:** Anlık hava durumu verilerini 
