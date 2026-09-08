@@ -109,7 +109,7 @@ function Dom() {
   const region = data.nearest_area[0].region[0].value
   const area  = data.nearest_area[0].areaName[0].value;
   
-  const cityName = country.toLowerCase() === "turkey" ? region : area;
+  const cityName = (country.toLowerCase() === "turkey") ||  (country.toLowerCase() === "united states of america") ? region : area;
 
     if(Normal(cityName) === Normal(searchİnput)){
       setCity(capitalizeCity(Normal(`${cityName}`)));
@@ -122,7 +122,7 @@ function Dom() {
     
   // Last Enter Five City
   if (!List.includes(Normal(searchİnput.trim()))) {
-    setList((prevList => [capitalizeCity(Normal(cityName)) , ...prevList].slice(0,5)));
+    setList((prevList => [capitalizeCity(Normal(`${searchİnput}`)) , ...prevList].slice(0,5)));
   }
 
 
