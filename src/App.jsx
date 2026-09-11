@@ -117,7 +117,7 @@ const capitalizeCity = (str) => {
   const fetchWeather = async ()=>{
   
   // Validation Check
-    if (!weather.searchİnput.trim()) {
+    if (!weather.searchİnput?.trim()) {
       setShowAlert({type : true, message : "⚠️ Lütfen geçerli bir şehir adı giriniz!"});
       setAlert({type : true, name : 'input'});
       return;

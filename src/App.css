@@ -542,10 +542,7 @@
   .weatherHeader{
     font-size: 1.2rem;
   }
-  .weatherCards{
-    min-width: 125px;
-    padding: 12px 8px;
-  }
+
 }
 
 @media screen and (max-width : 500px ) {

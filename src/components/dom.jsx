@@ -155,7 +155,7 @@ return (
        <h2 className="loadingText" style={{ color: 'white' }}>Yükleniyor...</h2>
     </div>
 
-  </>      
+    </>      
   )
 }
 export default Document
