@@ -38,6 +38,7 @@
   border-bottom: 1px solid #334155;
   padding: 18px 40px;
   margin-bottom: 30px;
+  height: 100px;
 }
 
 .header-content {
@@ -47,12 +48,14 @@
   align-items: center;
   justify-content: left;
   gap: 15px;
+  
+  overflow: hidden;
 
 }
 
 .logo-title {
   color: #ffffff;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: -0.5px;
 }
@@ -149,16 +152,6 @@
   gap: 24px;
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .app-header {
-    padding: 16px 20px;
-  }
-}
-
 .result-card {
   background-color: #1e293b; 
   border-radius: 16px;
@@ -167,20 +160,42 @@
   flex-direction: column;
   justify-content: space-around;
   min-height: 240px;
+  overflow: hidden;
+ 
 }
 
 .location-info {
-  margin-bottom: 16px;
+  margin-bottom: 26px;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  
 }
 
+.analytics{
+  display: flex;
+  flex-direction: column;
+  
+  width: 45%;
+  text-align: left;
+  gap:20px;
+  
+}
+.analyticsValue{
+  border-bottom: 2px solid gray;
+  padding-bottom: 5px;
+}
 .city {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #38bdf8;
+  word-wrap: break-word;
+  flex-wrap: wrap;
 }
 
 .country {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #94a3b8;
   font-weight: 400;
   margin-top: 4px;
@@ -337,12 +352,6 @@
   cursor: pointer;
  
 }
-
-@media screen and (max-width: 432px) {
-  .buttons{
-    min-width: 100px;
-  }
-}
 #cookie-ok:hover{
   
   background-color:  #64748b;
@@ -374,6 +383,106 @@
 
 }
 
+.sevenDaysWeather{
+    border-radius : 16px;
+    background-color : #1e293b;
+    min-width : 100%;
+    min-height : 300px;
+    padding : 20px;
+    box-sizing: border-box;
+}
+
+.weatherHeader{
+  font-size: 30px ;
+  padding-bottom: 15px;
+  border-bottom: 2px solid white;
+  width:100%;
+}
+.sevenDayHeader{
+    display: flex;
+    justify-content: left;
+}
+.weathers{
+    overflow-y : auto;
+    gap : 20px;
+    background-color : #1e293b;
+    padding:15px;
+    display : flex;
+    margin-top: 10px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    
+}
+.weathers::-webkit-scrollbar{
+  height: 8px;
+}
+.weathers::-webkit-scrollbar-track{
+  background-color: #0f172a;
+  border-radius: 10px;
+  
+}
+.weathers::-webkit-scrollbar-thumb{
+  background : #475569;
+  border-radius: 10px;
+}
+.weatherCards{
+    background-color : #0f172a;
+    min-width: 200px;
+    min-height : 350px;
+    border-radius: 16px;
+    padding: 16px 12px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+}
+
+.days{
+    text-align : center ;
+    font-size: 16px;
+   
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+.day {
+    padding-bottom : 10px;
+    border-bottom : 2px solid white;
+    padding-top: 5px;
+}
+
+.weatherCard{
+    display : flex ;
+    justify-content : center;
+    flex-direction : column;
+    align-items : center;
+    gap : 40px;
+    width: 100%;
+}
+.weatherIcon{
+    width : 80px;
+    margin-top : 40px;
+}
+.stateWeahter{
+    color: white;
+}
+.tempValues{
+    display : flex ;
+    gap : 20px;
+}
+
+.weatherStateIcon{
+  width: 80px;
+  
+}
+
+.analytics{
+  font-size: 13px;
+  
+}
+
+
 @keyframes slideUp {
   from {
     transform: translateY(100px);
@@ -384,3 +493,72 @@
     opacity: 1;
   }
 }
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .app-header {
+    padding: 16px 20px;
+  }
+}
+
+@media screen and (max-width : 460px) {
+  .analytics{
+    flex: 1 1 240px;
+  }
+  .weatherStateIcon{
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+@media screen and (max-width: 432px) {
+  .buttons{
+    min-width: 100px;
+  }
+}
+
+@media screen and (max-width:768px) {
+  .weatherHeader{
+    font-size: 18px;
+    
+  }
+
+    .analytics{
+    flex: 1 1 240px;
+    
+  }
+  .weatherStateIcon{
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .sevenDaysWeather{
+    padding: 15px 10px;
+  }
+  .weatherHeader{
+    font-size: 1.2rem;
+  }
+  .weatherCards{
+    min-width: 125px;
+    padding: 12px 8px;
+  }
+}
+
+@media screen and (max-width : 500px ) {
+  .sevenDaysWeather{
+    padding: 20px;
+  }
+  .weatherHeader{
+    font-size: 1rem;
+    
+  }
+
+ 
+}
+
+
+

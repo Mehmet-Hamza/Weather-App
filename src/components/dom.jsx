@@ -1,4 +1,4 @@
-
+import { useEffect, useRef, useState } from "react";
 
 function Document({weather,
   setWeather,
@@ -6,7 +6,12 @@ function Document({weather,
   showAlert,
   fetchWeather,
   List,
-  logo}){
+  logo,
+  weatherValue
+}){
+
+let InputRef = useRef(null);
+
 return (
   <>  
 
@@ -19,7 +24,7 @@ return (
       {/* HEADER SİDE */}
       <header className="app-header">
         <div className="header-content">
-          <img style={{ width: '100px' }} src={logo} alt="Lion Weather App Logo"/>
+          <img style={{ width: '70px' }} src={logo} alt="Lion Weather App Logo"/>
           <h1 className="logo-title">Lion Weather</h1>
           <div className="header-icon-container">
           </div>
@@ -29,9 +34,10 @@ return (
     <div className="app-container">
     {/* <!-- Search Card --> */}
     <div className="inputCard">
-      <h2>Şehir / İlçe Hava Durumu Sorgula</h2>
+      <h2>Hava Durumu Sorgula</h2>
         <form onSubmit={(e) => { e.preventDefault(); fetchWeather(); }} id="search-form" className="search-box" noValidate>
           <input 
+            ref={InputRef}
             className={alert.name === 'input' ? "input invalid" : "input"}
             onChange={(e) => {const weatherValue = e.target.value; setWeather({
               searchİnput : weatherValue,
@@ -47,7 +53,7 @@ return (
             required 
             autoComplete="off"
           />
-          <button type="submit" className="input-btn" >Ara</button>
+          <button onClick={() => {InputRef.current.value = ""}} type="submit" className="input-btn" >Ara</button>
         </form>
         {/* Error Alert */}
         <div className = {alert.name === 'error' ? "errorCard show" : "errorCard"}>
@@ -60,8 +66,23 @@ return (
       {/*  Weather Conclusion Card */}
       <div className="result-card">
         <div className="location-info">
+            <div>
           <h2 className="city">{weather.sehir ||'Şehir Seçin'} </h2>
           <h3 className="country">{(weather.ülke.toLowerCase() === "turkey" ? "Türkiye" : weather.ülke) || 'Ülke Bilgisi'}</h3>
+            </div>
+            {weather.sehir && (
+             <> 
+              <div className="İsDay">
+                {weatherValue.day === 1 ? <img className="weatherStateIcon" src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Sun/3D/sun_3d.png" alt="Sunny" /> : <img className="weatherStateIcon" src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Crescent%20moon/3D/crescent_moon_3d.png" alt="night"/>} 
+              </div>
+
+              {/* Analytics */}              
+              <div className="analytics">  
+                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Hissedilen Sıcaklık<strong>{`${Math.round(weatherValue.apparentTemp)} °C`}</strong></span>
+                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Gün Doğuşu / Batımı<strong>{`${weatherValue.sunrise} / ${weatherValue.sunset}`}</strong></span>
+                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Hava Kalitesi<strong>{weatherValue.weatherState <= 48 ? <p style={{color : 'lightgreen'}}>İyi</p> : weatherValue.weatherState >48 && weatherValue.weatherState <= 75 ? <p style={{color : 'yellow'}}>Orta </p>: <p style={{color : 'tomato'}}>Kötü</p>}</strong></span>
+                </div>
+              </> )}
         </div>
 
         {/* Details */}
@@ -96,15 +117,44 @@ return (
         </ul>
       </div>
     </div>
+
+<div className="sevenDaysWeather">
+    <div className="sevenDayHeader"><h1 className="weatherHeader">7 Günlük Hava Durumu Tahmini {weather.sehir ? "-" : ""} {weather.sehir}</h1></div>
+
+    {weatherValue.SevenDates && weatherValue.SevenDates.length > 0 && (
+        <div className="weathers">
+          {/* Card */}
+          {
+            weatherValue.SevenDates.map((dayName , index) => {
+                return(
+                    <div key={index} className="weatherCards">
+                        <div className="days"><h3 className="day">{index === 0 ? "Bugün" : dayName}</h3></div>
+                         <div className="weatherCard">
+                                <img className = "weatherIcon" src={weatherValue.icon[index]} alt="Logo" />
+                                <p className="stateWeahter">{weatherValue.weatherCode[index]}</p>
+                                    <div className="tempValues">
+                                        <p>{Math.round(weatherValue.maxTemp[index])}°C</p>
+                                        <span>/</span>
+                                        <p>{Math.round(weatherValue.minTemp[index])}°C</p>
+                                    </div>
+                        </div>
+                    </div>
+                )
+            })
+          }
+          </div>)}
+
+        </div>
   </div>
-    
+  
+
    {/* Loading Screen  */}
   
     <div className={alert.name === 'loading' ? "loadingDiv show" : "loadingDiv"}>
       
        <h2 className="loadingText" style={{ color: 'white' }}>Yükleniyor...</h2>
     </div>
-   
+
   </>      
   )
 }
