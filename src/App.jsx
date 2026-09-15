@@ -1,13 +1,15 @@
 import "./App.css"
-import logo from "./assets/lion-head-png-logo-4.png"
 import { useState } from 'react'
 import { useEffect } from 'react'
-import  Document  from "./components/dom.jsx"
+import  WeatherCard  from "./components/dom.jsx"
 import { GetWeatherIcon  } from "./components/weatherIcons.jsx"
-
+import SearchBox from "./components/searchBox.jsx"
+import { Normal , capitalizeCity, getDay , formatTime , localTime } from "./Utils/cityHelpers.js"
+import { weatherStatus } from "./Utils/weatherStatus.js"
+import { Routes , Route} from 'react-router-dom'
 
 function App() {
-  
+
   const [weather , setWeather] = useState({
     searchİnput : "",
     sehir : "",
@@ -30,6 +32,8 @@ function App() {
     sunset : "",
     weatherState : "",
     day : "",
+    timeZone : ""
+    
   })
 
   // Alert Showing
@@ -44,76 +48,8 @@ function App() {
      
   }, [showAlert]);
 
-  
-const Normal = (string) => {
-  return string.toLocaleLowerCase('tr-TR')
-    .replace(/İ/g , 'i')
-    .replace(/I/g , 'i')
-    .replace(/ı/g , 'i')
-    .replace(/ö/g , 'o' )
-    .replace(/ü/g , 'u')
-    .replace(/ş/g , 's')
-    .replace(/ç/g , 'c')
-    .replace(/ğ/g , 'g')
-  }
 
-const capitalizeCity = (str) => {
-  return str
-    .split(' ')
-    .map(word => word.charAt(0).toLocaleUpperCase('tr-TR') + word.slice(1).toLocaleLowerCase('tr-TR'))
-    .join(' ');
-  };
-
-  const getDay = (date) =>{
-    const dating = new Date(date);
-    return dating.toLocaleDateString('tr-TR' , {weekday : 'long'});
-  }
-
-  const formatTime = (format) => {
-    if(!format) return "";
-    return format.split("T")[1];
-  }
-  const weatherStatus = (code) => {
-
-    if(code === 0){
-      return "Güneşli";
-    }
-    else if(code === 1 || code === 2){
-      return "Az/Parçalı Bulutlu";
-      
-    }
-    else if(code === 3){
-      return "Kapalı/Bulutlu";
-      
-    }
-    else if(code === 45 || code === 48){
-      return "Sisli";
-      
-    }
-    else if(code === 51 || code === 53 || code === 55){
-      return "Hafif Yağmurlu";
-      
-    }
-    else if(code === 61 || code === 63 || code === 65){
-      return "Yağmurlu Sağanak";
-      
-    }
-    else if(code === 71 || code === 73 || code === 75){
-      return "Karlı";
-      
-    }
-    else if(code === 80 || code === 81 || code === 82 ){
-      return "Şiddetli Yağmurlu";
-      
-    }
-    else if(code === 95 || code === 96 || code === 99){
-      return "Fırtınalı/Gökgürültülü";
-      
-    }
-    return {text , iconUrl}
-  }
-
-// Weather 
+// Weather App 
   const fetchWeather = async ()=>{
   
   // Validation Check
@@ -122,33 +58,30 @@ const capitalizeCity = (str) => {
       setAlert({type : true, name : 'input'});
       return;
     }
-    else if (weather.searchİnput.trim().length < 4) {
+    else if (weather.searchİnput.trim().length < 3) {
       setShowAlert({type : true , message : "Girilen Karakter Sayısı 3 ten az Olamaz !"});
       setAlert({type: true , name : 'error'});
       setAlert({type : true , name : 'input'});
       return;
     }
 
+    // Manage
     try{
-      setAlert({type : true , name : 'loading'});  
-      const res = await fetch(`https://wttr.in/${encodeURIComponent(weather.searchİnput.trim())}?format=j1`);
-      const data = await res.json();
-      console.log(data);
-
-      // GeoCoding Api
+      setAlert({type : true , name : 'loading'});
+     
+      // GeoCoding Api & New Api
       const resNew = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(weather.searchİnput.trim())}&count=1&language=tr&format=json`)
       const dataNew = await resNew.json();
+  
+      const {latitude , longitude} = dataNew.results[0];
 
-      const {latitude , longitude , name , country } = dataNew.results[0];
-      
-
-      const realResApi = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset&current=precipitation,rain,is_day,weather_code,wind_speed_10m,temperature_2m,apparent_temperature,is_day,wind_direction_10m&timezone=auto`)
+      const realResApi = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset&current=precipitation,rain,is_day,weather_code,relative_humidity_2m,wind_speed_10m,temperature_2m,apparent_temperature,is_day,wind_direction_10m&timezone=auto`)
       const realData = await  realResApi.json();
       console.log(realData);
 
     
   // Fetch Valid Check
-  if(!data.nearest_area || !data.current_condition || !isNaN(weather.searchİnput) || !data){
+  if(!dataNew.results[0].admin1 || !isNaN(weather.searchİnput) || capitalizeCity(Normal(weather.searchİnput.trim())) !== capitalizeCity(Normal(dataNew.results[0].name))){
     setShowAlert({type : true , message : "⚠️ Geçersiz Şehir"});
     setAlert({type : true, name : 'error'});
     setAlert({type : true, name : 'input'});
@@ -157,11 +90,10 @@ const capitalizeCity = (str) => {
   setAlert({type : false , name  :null}); 
 
   // Weather Values
-  const {temp_C, windspeedKmph, humidity} = data.current_condition[0];
-  
-  const countrys = data.nearest_area[0].country[0].value
-  const region = data.nearest_area[0].region[0].value
-  const area  = data.nearest_area[0].areaName[0].value;
+  const {temperature_2m , wind_speed_10m, relative_humidity_2m } = realData.current;
+
+  const countrys = dataNew.results[0].country
+  const region = dataNew.results[0].name
 
   setWeatherValue({
     maxTemp : realData.daily.temperature_2m_max,
@@ -173,32 +105,18 @@ const capitalizeCity = (str) => {
     sunrise : formatTime(realData.daily.sunrise[0]),
     sunset : formatTime(realData.daily.sunset[0]),
     weatherState : realData.daily.weather_code[0],
-    day : realData.current.is_day
-  })
-  
-  const cityName = (countrys.toLowerCase() === "turkey") ||  (countrys.toLowerCase() === "united states of america") ? region : area;
-
-    if(Normal(cityName) === Normal(weather.searchİnput)){
+    day : realData.current.is_day,
+    timeZone : localTime(realData.timezone)
     
-        setWeather({
-          sehir : capitalizeCity(Normal(cityName)),
-          ülke : countrys,
-          sicak : temp_C,
-          rüzgaR : windspeedKmph,
-          neM : humidity
-        })
-    }
-    else if(Normal(cityName) !== Normal(weather.searchİnput)){
-     
-        setWeather({
-          sehir : `${capitalizeCity(Normal(weather.searchİnput))} / ${capitalizeCity(Normal(cityName))}`,
-          ülke : countrys,
-          sicak : temp_C,
-          rüzgaR : windspeedKmph,
-          neM : humidity
-          
-      })
-    }
+  })
+
+  setWeather({
+      sehir : capitalizeCity(Normal(region)),
+      ülke : countrys,
+      sicak : temperature_2m,
+      rüzgaR : wind_speed_10m,
+      neM : relative_humidity_2m
+    })
     
   // Last Enter Five City
   if (!List.includes(Normal(weather.searchİnput.trim()))) {
@@ -207,7 +125,7 @@ const capitalizeCity = (str) => {
 
   }
   catch(error){
-    
+    console.error(error)
     setShowAlert({type : true , message : "İşlem Hatası Tekrar Deneyin"});
     setAlert({type : true , name : 'error'})
     return;
@@ -216,17 +134,25 @@ const capitalizeCity = (str) => {
 }
 
 return(
-  <Document  weather={weather}
-  setWeather={setWeather}
-  alert={alert}
-  showAlert={showAlert}
-  fetchWeather={fetchWeather}
-  List={List}
-  logo={logo}
-  weatherValue={weatherValue}
-  />
-)
+<>  
 
+<Routes>
+    <Route path="/" element={<WeatherCard 
+  weather = {weather}
+  alert={alert}
+  showAlertType={showAlert.type}
+  showAlertMSG = {showAlert.message}
+  List={List}
+  weatherValue={weatherValue}
+  
+  searchBoxComponent = {<SearchBox fetchWeather = {fetchWeather} alert = {alert} weather={weather} setWeather={setWeather}/>}
+  />}/>
+  <Route path="*" element = {<h1>Sayfa Bulunamadı</h1>}/>
+  </Routes>
+ 
+    
+</> 
+)
 
 }
 

@@ -482,6 +482,29 @@
   
 }
 
+.localClock{
+  display : flex;
+  background-Color : black;
+  justify-Content : space-around;
+  margin-Top : -28px;
+  margin-Bottom : 28px;
+  margin-Left : -28px;
+  margin-Right : -28px;
+  min-Height : 35px;
+  align-Items : center;
+  animation: fade 0.5s ease-in-out forwards ;
+}
+
+@keyframes fade {
+  0% {
+    transform: translateY(-70px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
 @keyframes slideUp {
   from {
@@ -505,7 +528,6 @@
     padding: 16px 20px;
   }
 }
-
 @media screen and (max-width : 460px) {
   .analytics{
     flex: 1 1 240px;
@@ -513,6 +535,10 @@
   .weatherStateIcon{
     padding-top: 10px;
     padding-bottom: 10px;
+  }
+
+  .localText{
+    font-size: 13px;
   }
 }
 @media screen and (max-width: 432px) {
