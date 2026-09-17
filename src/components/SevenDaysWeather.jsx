@@ -1,4 +1,8 @@
-function SevenDays({weatherValue, weather}){
+import { WeatherStore } from "../globalState/globalState";
+function SevenDays(){
+
+    const weather = WeatherStore((state) => state.weather)
+    const weatherValue = WeatherStore((state) => state.weatherValue)
 
     const { sehir } = weather;
     const {SevenDates , icon , weatherCode, maxTemp , minTemp} = weatherValue;

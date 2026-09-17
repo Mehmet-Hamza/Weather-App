@@ -1,6 +1,9 @@
-import { useRef , useState} from 'react'
-export default function SearchBox({fetchWeather , alert , weather , setWeather}){
+import { useRef } from 'react';
+import { WeatherStore  } from '../globalState/globalState';
+export default function SearchBox({fetchWeather , alert , setWeather}){
 
+
+const setSearch = WeatherStore((state) => state.setSearch)
 let InputRef = useRef(null);
 
 function click(){
@@ -9,22 +12,13 @@ function click(){
 
     return(
     <div className="inputCard">
-     
       <h2>Hava Durumu Sorgula</h2>
         <form onSubmit={(e) => { e.preventDefault(); click() }} id="search-form" className="search-box" noValidate>
           <input 
             ref={InputRef}
             className={alert.name === 'input' ? "input invalid" : "input"}
-            onChange={(e) => {const weatherValue = e.target.value; setWeather((prev) => ({
-              searchİnput : weatherValue,
-              sehir : prev?.sehir,
-              ülke : prev?.ülke,
-              sicak : prev?.sicak,
-              rüzgaR : prev?.rüzgaR,
-              neM : prev?.neM,
-            }));}}
+            onChange={(e) => {setSearch(e.target.value)}}
             id="input" 
-            value={weather?.searchİnput || ""}
             type="text" 
             placeholder="Örn: İstanbul, London..." 
             required 

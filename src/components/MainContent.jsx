@@ -1,5 +1,8 @@
+import { WeatherStore } from "../globalState/globalState";
+function MainContent({List}) {
 
-function MainContent({weatherValue, weather, List}) {
+  const weather = WeatherStore((state) => state.weather)
+  const  weatherValue = WeatherStore((state) => state.weatherValue)
 
     const { sehir , ülke , sicak , rüzgaR , neM} = weather;
     const { apparentTemp , sunrise , sunset , weatherState, timeZone  } = weatherValue;
@@ -27,9 +30,9 @@ function MainContent({weatherValue, weather, List}) {
 
               {/* Analytics */}              
               <div className="analytics">  
-                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Hissedilen Sıcaklık<strong>{`${Math.round(/* weatherValue. */apparentTemp)} °C`}</strong></span>
-                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Gün Doğuşu / Batımı<strong>{`${/* weatherValue. */sunrise} / ${/* weatherValue. */sunset}`}</strong></span>
-                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Hava Kalitesi<strong>{/* weatherValue. */weatherState <= 48 ? <p style={{color : 'lightgreen'}}>İyi</p> : /* weatherValue. */weatherState >48 && /* weatherValue. */weatherState <= 75 ? <p style={{color : 'yellow'}}>Orta </p>: <p style={{color : 'tomato'}}>Kötü</p>}</strong></span>
+                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Hissedilen Sıcaklık<strong>{`${Math.round(apparentTemp)} °C`}</strong></span>
+                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Gün Doğuşu / Batımı<strong>{`${sunrise} / ${sunset}`}</strong></span>
+                <span style={{display : 'flex', justifyContent : 'space-between' }} className="analyticsValue">Hava Kalitesi<strong>{weatherState <= 48 ? <p style={{color : 'lightgreen'}}>İyi</p> : weatherState >48 && weatherState <= 75 ? <p style={{color : 'yellow'}}>Orta </p>: <p style={{color : 'tomato'}}>Kötü</p>}</strong></span>
                 </div>
               </> )}
         </div>

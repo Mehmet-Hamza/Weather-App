@@ -7,35 +7,20 @@ import SearchBox from "./components/searchBox.jsx"
 import { Normal , capitalizeCity, getDay , formatTime , localTime } from "./Utils/cityHelpers.js"
 import { weatherStatus } from "./Utils/weatherStatus.js"
 import { Routes , Route} from 'react-router-dom'
+import { WeatherStore } from "./globalState/globalState.jsx"
 
 function App() {
 
-  const [weather , setWeather] = useState({
-    searchİnput : "",
-    sehir : "",
-    ülke  : "",
-    sicak : "",
-    rüzgaR : "",
-    neM :  "" 
-  }) 
+  let searchInput = WeatherStore((state) => state.weather.searchInput)
+  const setWeather = WeatherStore((state) => state.setWeather)
+  const setWeatherValue = WeatherStore((state) => state.setWeatherValue)
+    
+
   const [alert , setAlert] = useState({type : false, name : null })
   const [showAlert, setShowAlert] = useState({type : false , message : ''});
   const [List , setList] = useState([]);
-  const [weatherValue , setWeatherValue] = useState({
-    maxTemp : "",
-    minTemp : "",
-    SevenDates : "",
-    weatherCode : "",
-    icon : "",
-    apparentTemp : "",
-    sunrise  : "",
-    sunset : "",
-    weatherState : "",
-    day : "",
-    timeZone : ""
-    
-  })
 
+  
   // Alert Showing
   useEffect(() => {
   if(showAlert.type){
@@ -53,12 +38,12 @@ function App() {
   const fetchWeather = async ()=>{
   
   // Validation Check
-    if (!weather.searchİnput?.trim()) {
+    if (!searchInput?.trim()) {
       setShowAlert({type : true, message : "⚠️ Lütfen geçerli bir şehir adı giriniz!"});
       setAlert({type : true, name : 'input'});
       return;
     }
-    else if (weather.searchİnput.trim().length < 3) {
+    else if (searchInput.trim().length < 3) {
       setShowAlert({type : true , message : "Girilen Karakter Sayısı 3 ten az Olamaz !"});
       setAlert({type: true , name : 'error'});
       setAlert({type : true , name : 'input'});
@@ -70,7 +55,7 @@ function App() {
       setAlert({type : true , name : 'loading'});
      
       // GeoCoding Api & New Api
-      const resNew = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(weather.searchİnput.trim())}&count=1&language=tr&format=json`)
+      const resNew = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchInput.trim())}&count=1&language=tr&format=json`)
       const dataNew = await resNew.json();
   
       const {latitude , longitude} = dataNew.results[0];
@@ -81,7 +66,7 @@ function App() {
 
     
   // Fetch Valid Check
-  if(!dataNew.results[0].admin1 || !isNaN(weather.searchİnput) || capitalizeCity(Normal(weather.searchİnput.trim())) !== capitalizeCity(Normal(dataNew.results[0].name))){
+  if(!dataNew.results[0].admin1 || !isNaN(searchInput) || capitalizeCity(Normal(searchInput.trim())) !== capitalizeCity(Normal(dataNew.results[0].name))){
     setShowAlert({type : true , message : "⚠️ Geçersiz Şehir"});
     setAlert({type : true, name : 'error'});
     setAlert({type : true, name : 'input'});
@@ -119,13 +104,13 @@ function App() {
     })
     
   // Last Enter Five City
-  if (!List.includes(Normal(weather.searchİnput.trim()))) {
-    setList((prevList => [capitalizeCity(Normal(`${weather.searchİnput}`)) , ...prevList].slice(0,5)));
+  if (!List.includes(Normal(searchInput.trim()))) {
+    setList((prevList => [capitalizeCity(Normal(`${searchInput}`)) , ...prevList].slice(0,5)));
   }
 
   }
   catch(error){
-    console.error(error)
+    console.log(error)
     setShowAlert({type : true , message : "İşlem Hatası Tekrar Deneyin"});
     setAlert({type : true , name : 'error'})
     return;
@@ -138,14 +123,13 @@ return(
 
 <Routes>
     <Route path="/" element={<WeatherCard 
-  weather = {weather}
   alert={alert}
   showAlertType={showAlert.type}
   showAlertMSG = {showAlert.message}
   List={List}
-  weatherValue={weatherValue}
   
-  searchBoxComponent = {<SearchBox fetchWeather = {fetchWeather} alert = {alert} weather={weather} setWeather={setWeather}/>}
+  
+  searchBoxComponent = {<SearchBox fetchWeather = {fetchWeather} alert = {alert} setWeather={setWeather}/>}
   />}/>
   <Route path="*" element = {<h1>Sayfa Bulunamadı</h1>}/>
   </Routes>
